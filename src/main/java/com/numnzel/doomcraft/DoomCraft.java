@@ -9,6 +9,7 @@ import com.numnzel.doomcraft.block.DoomBlocks;
 import com.numnzel.doomcraft.block.UacMetalBlock;
 import com.numnzel.doomcraft.setup.ClientProxy;
 import com.numnzel.doomcraft.setup.IProxy;
+import com.numnzel.doomcraft.setup.ModSetup;
 import com.numnzel.doomcraft.setup.ServerProxy;
 
 import net.minecraft.block.Block;
@@ -27,6 +28,8 @@ public class DoomCraft {
 
 	public static IProxy proxy = DistExecutor.runForDist(() -> () -> new ClientProxy(), () -> () -> new ServerProxy());
 
+	public static ModSetup setup = new ModSetup();
+	
 	private static final Logger LOGGER = LogManager.getLogger();
 	
 	public DoomCraft() {
@@ -35,6 +38,8 @@ public class DoomCraft {
 	}
 	
 	private void setup(final FMLCommonSetupEvent event) {
+		setup.init();
+		proxy.init();
 	}
 	
 	// You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
@@ -48,7 +53,9 @@ public class DoomCraft {
 		
 		@SubscribeEvent
 		public static void onItemsRegistry(final RegistryEvent.Register<Item> event) {
-			event.getRegistry().register(new BlockItem(DoomBlocks.UACMETALBLOCK, new Item.Properties()).setRegistryName("uacmetalblock"));
+			Item.Properties properties = new Item.Properties()
+					.group(setup.itemGroup);
+			event.getRegistry().register(new BlockItem(DoomBlocks.UACMETALBLOCK, properties).setRegistryName("uacmetalblock"));
 		}
 	}
 }
